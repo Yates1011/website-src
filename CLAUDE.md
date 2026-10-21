@@ -31,6 +31,15 @@ serves finished HTML.
 - Preview before publishing: `make serve` → http://localhost:8000.
 - Publish: `make publish` (builds live into /var/www/html, then `git push`).
 
+## Auto-deploy
+- `deploy.sh` runs every minute via cron (user `yates`): pulls `origin/main`
+  and rebuilds **only when there's a newer commit**. So pushing to `main` from
+  anywhere publishes within a minute — no need to be on the VPS.
+- Pull-only, outbound, no credentials (public repo). Fast-forward only; builds
+  to a staging dir then publishes (top-level overwritten, `articles/` mirrored);
+  `flock`-guarded; logs to `deploy.log`.
+- Pause with `crontab -e`; deploy by hand with `./deploy.sh`.
+
 ## Conventions
 - Every page shares the same top bar (`<nav class="top-bar">`) and footer.
 - British English spelling throughout.

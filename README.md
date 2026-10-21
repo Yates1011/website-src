@@ -69,26 +69,28 @@ footer, article page shell) are constants near the top of `build.py`.
 2. From then on: write a post, `make serve` to check it, `make publish` to go
    live and push to GitHub in one step.
 
-## Optional: deploy automatically on `git push`
+## Automatic deploy (installed)
 
-Because you build directly on the VPS, `make publish` already makes a post live.
-If you later want pushing from *another* machine to publish automatically,
-install a **GitHub Actions self-hosted runner** on this VPS and add a workflow:
+A cron job on the VPS (`deploy.sh`, run every minute as `yates`) publishes
+automatically: **push to `main` from anywhere → the site updates within a
+minute**. No need to be on the VPS.
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: [self-hosted]       # the runner installed on this VPS
-    steps:
-      - uses: actions/checkout@v4
-      - run: python3 build.py    # writes straight to /var/www/html
-```
+`deploy.sh` is pull-only and outbound — it fetches `origin/main` (public repo,
+so no credentials), and only acts when there is a genuinely newer commit. It is
+hardened:
 
-Runner setup: GitHub repo → Settings → Actions → Runners → New self-hosted
-runner, and follow the install commands. Until a runner is registered, leave
-this workflow out (jobs would queue forever with nowhere to run).
+- **fast-forward only** — refuses rewritten/force-pushed history;
+- builds into a throwaway staging dir, then publishes, so nginx never serves a
+  half-written site;
+- top-level files are overwritten but never deleted (protects unmanaged files
+  in the web root); `articles/` is mirrored exactly;
+- `flock` prevents overlapping runs;
+- runs as the unprivileged `yates` user, never root.
+
+Deploys are logged to `deploy.log` (git-ignored). To pause auto-deploy:
+`crontab -e` and comment out the `deploy.sh` line. To deploy by hand:
+`./deploy.sh`.
+
+Note: because the deploy pulls with no credentials, the VPS needs no GitHub
+token to publish. A token is only needed to *push from the VPS*
+(`make publish`); if you push from elsewhere, keep no token on the VPS.
