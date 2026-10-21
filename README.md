@@ -1,9 +1,8 @@
 # william-yates.dev
 
 Source and build tooling for [william-yates.dev](https://william-yates.dev).
-Write articles in Markdown, run one command, and the styled site is generated
-into the nginx web root (`/var/www/html`). The repo is the source; the web root
-is build output.
+So I can write articles in Markdown, run a command, and the styled site is generated
+into the nginx web root (`/var/www/html`). 
 
 ## Writing a new article
 
