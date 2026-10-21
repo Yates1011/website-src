@@ -1,0 +1,9 @@
+# Local preview build output
+out/
+
+# Python virtualenv (vendored markdown means this isn't needed to build)
+.venv/
+
+# Python caches
+__pycache__/
+*.pyc

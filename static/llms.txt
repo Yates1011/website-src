@@ -1,0 +1,23 @@
+# William Yates
+
+> Software engineer based in the UK. I build apps, tools, and experiments and write about what I learn.
+
+## Site
+
+- Homepage: https://william-yates.dev
+- Projects: https://william-yates.dev/projects.html
+- Writing: https://william-yates.dev/writing.html
+- Contact: info@william-yates.dev
+
+## Projects
+
+- CHIP-8 Emulator: https://william-yates.dev/chip8.html
+  A fully functional CHIP-8 emulator written in C++, implementing the full instruction set, display, and input handling.
+
+## Writing
+
+- Articles: https://william-yates.dev/writing.html
+
+## Source
+
+- GitHub: https://github.com/Yates1011
