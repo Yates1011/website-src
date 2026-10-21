@@ -51,7 +51,13 @@ SITE_ROOT="$STAGING" python3 build.py >>"$LOG" 2>&1
 
 # Publish: top-level files are overwritten but never deleted (protects
 # unmanaged files in the web root); articles/ is mirrored exactly.
-rsync -a "$STAGING"/ "$WEBROOT"/ --exclude 'articles/' >>"$LOG" 2>&1
-rsync -a --delete "$STAGING/articles/" "$WEBROOT/articles/" >>"$LOG" 2>&1
+#
+# --chmod forces nginx-readable modes (dirs 755, files 644) and, crucially,
+# stops rsync copying the staging dir's own mode (mktemp creates it 700) onto
+# the web root, which would 403 the whole site. We deliberately do NOT use -a:
+# no -p/-o/-g (perms come from --chmod; we can't chown as non-root anyway).
+RSYNC="rsync -rlt --chmod=D755,F644"
+$RSYNC "$STAGING"/ "$WEBROOT"/ --exclude 'articles/' >>"$LOG" 2>&1
+$RSYNC --delete "$STAGING/articles/" "$WEBROOT/articles/" >>"$LOG" 2>&1
 
 echo "$(date -Is) deploy: done" >>"$LOG"
